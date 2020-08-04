@@ -23,6 +23,7 @@ class ChatServer implements MessageComponentInterface
     {
         if (0 === strpos($message, '/name')) {
             $this->clients[$from]->name = trim(substr($message, 5));
+            $from->send(sprintf('[server] your name is now: %s', $this->clients[$from]->name));
             return;
         }
 
