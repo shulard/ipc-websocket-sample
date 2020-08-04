@@ -46,6 +46,6 @@ class ChatServer implements MessageComponentInterface
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
         $conn->close();
-        throw $e;
+        echo sprintf("[error] %s\n", $e->getMessage());
     }
 }
