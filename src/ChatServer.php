@@ -17,19 +17,24 @@ class ChatServer implements MessageComponentInterface
     public function onOpen(ConnectionInterface $conn)
     {
         $this->clients->attach($conn, new \stdClass);
+        echo sprintf("[server] %s connected.\n", spl_object_hash($conn));
     }
 
     public function onMessage(ConnectionInterface $from, $message)
     {
         if (0 === strpos($message, '/name')) {
             $this->clients[$from]->name = trim(substr($message, 5));
-            $from->send(sprintf('[server] your name is now: %s', $this->clients[$from]->name));
+            $answer = sprintf('[server] your name is now: %s', $this->clients[$from]->name);
+            echo $answer . "\n";
+            $from->send($answer);
             return;
         }
 
         if (isset($this->clients[$from]->name)) {
             $message = sprintf('%s: %s', $this->clients[$from]->name, $message);
         }
+
+        echo $message . "\n";
 
         foreach ($this->clients as $client) {
             if ($client !== $from) {
@@ -41,6 +46,7 @@ class ChatServer implements MessageComponentInterface
     public function onClose(ConnectionInterface $conn)
     {
         $this->clients->detach($conn);
+        echo sprintf("[server] %s disconnected.\n", spl_object_hash($conn));
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e)
